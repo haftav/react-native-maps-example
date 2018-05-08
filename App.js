@@ -6,11 +6,13 @@
 
 import React, { Component } from 'react';
 import {
+  View,
   Text,
   StyleSheet,
   Dimensions
 } from 'react-native';
 import MapView from 'react-native-maps';
+import Menu from './Menu';
 //import ClusteredMapView from 'react-native-maps-super-cluster';
 import image from './images/flag-pink.png';
 
@@ -34,12 +36,12 @@ export default class App extends Component<{}> {
         longitude: 0,
         latitudeDelta: 0,
         longitudeDelta: 0
-      }, 
+      },
       markerPosition: {
         latitude: 0,
         longitude: 0
       }
-    } 
+    }
   }
 
   watchID: ?number = null
@@ -61,43 +63,45 @@ export default class App extends Component<{}> {
         markerPosition: initialRegion
       })
     }, (error) => alert(JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000})
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
 
-      this.watchID = navigator.geolocation.watchPosition((position) => {
-        var lat = parseFloat(position.coords.latitude);
-        var long = parseFloat(position.coords.longitude);
+    this.watchID = navigator.geolocation.watchPosition((position) => {
+      var lat = parseFloat(position.coords.latitude);
+      var long = parseFloat(position.coords.longitude);
 
-        var lastRegion = {
-          latitude: lat,
-          longitude: long,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA
-        }
+      var lastRegion = {
+        latitude: lat,
+        longitude: long,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      }
 
-        this.setState({
-          initialPosition: lastRegion,
-          markerPosition: lastRegion
-        })
+      this.setState({
+        initialPosition: lastRegion,
+        markerPosition: lastRegion
       })
+    })
   }
 
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchID); 
+    navigator.geolocation.clearWatch(this.watchID);
   }
 
   render() {
 
 
     return (
-      <MapView
-        region={this.state.initialPosition}
-        style={StyleSheet.absoluteFillObject}>
-        <MapView.Marker coordinate={this.state.markerPosition}>
-         
-        </MapView.Marker>
-        
+      <View style={StyleSheet.absoluteFill}>
+        <MapView
+          region={this.state.initialPosition}
+          style={StyleSheet.absoluteFillObject}>
+          <MapView.Marker coordinate={this.state.markerPosition}>
 
-      </MapView>
+          </MapView.Marker>
+
+        </MapView>
+        <Menu />
+      </View>
     );
   }
 }
