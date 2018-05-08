@@ -1,29 +1,38 @@
 import React, { Component } from 'react';
+import { createStackNavigator } from 'react-navigation';
 
 import {
   View,
-  Text,
   StyleSheet,
-  Dimensions
 } from 'react-native';
 
-import MapView from 'react-native-maps';
 import Menu from './Menu';
 import Map from './Map';
+import Profile from './Profile';
+
+const RootStack = createStackNavigator(
+  {
+    Map: Map,
+    Profile: Profile
+  },
+  {
+    initialRouteName: 'Map'
+  }
+)
 
 export default class App extends Component {
   constructor() {
     super();
 
   }
-
-
   render() {
     return (
       <View style={StyleSheet.absoluteFill}>
-        <Map />
+        <RootStack />
         <Menu />
       </View>
     );
   }
 }
+
+
