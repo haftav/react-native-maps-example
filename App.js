@@ -29,8 +29,8 @@ export default class App extends Component {
     return (
       <View style={StyleSheet.absoluteFill}>
         <RootStack />
-        <Menu />
       </View>
+
     );
   }
 }

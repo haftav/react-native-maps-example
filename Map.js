@@ -3,10 +3,12 @@ import {
     View,
     Text,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    TouchableOpacity
 } from 'react-native';
 import MapView from 'react-native-maps';
 import Menu from './Menu';
+import Icon from 'react-native-vector-icons/Feather';
 
 
 const { width, height } = Dimensions.get('window');
@@ -79,17 +81,50 @@ export default class Map extends Component {
         navigator.geolocation.clearWatch(this.watchID);
     }
 
+    handlePress = () => {
+
+    }
+
     render() {
 
 
         return (
             <View style={StyleSheet.absoluteFill}>
+                <TouchableOpacity onPress={this.handlePress} style={styles.getCurrentPosition}>
+                    <Icon style={styles.navigator} name="navigation" size={20} />
+                </TouchableOpacity>
                 <MapView
                     region={this.state.initialPosition}
-                    style={StyleSheet.absoluteFillObject}>
+                    style={styles.map}>
                     <MapView.Marker coordinate={this.state.markerPosition} />
                 </MapView>
+                <Menu />
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    getCurrentPosition: {
+        backgroundColor: 'white',
+        borderWidth: 2,
+        borderColor: '#b3b3b3',
+        width: 35,
+        height: 35,
+        borderRadius: 3,
+        position: 'absolute',
+        top: 25,
+        left: 25,
+        zIndex: 50,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }, 
+    map: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 5
+    },
+    navigator: {
+        color: '#2D9CDB',
+        fontSize: 17
+    }
+})

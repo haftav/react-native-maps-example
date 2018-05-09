@@ -2,18 +2,23 @@ import React, { Component } from 'react';
 import { 
     View,
     Text,
+    TouchableOpacity,
     StyleSheet
  } from 'react-native';
  import Icon from 'react-native-vector-icons/Feather';
+ import { withNavigation } from 'react-navigation';
 
 
-export default class Menu extends Component {
+ class Menu extends Component {
+     constructor(props) {
+         super(props);
+     }
     render() {
         return (
             <View style={styles.menuWrapper}>
-                <View style={styles.box}><Icon style={styles.icon} name="settings" size={25} color="black" /></View>
-                <View style={styles.box}><Icon name="map" size={25} color="black" /></View>
-                <View style={styles.box}><Icon name="user" size={25} color="black" /></View>
+                <TouchableOpacity style={styles.box}><Icon style={styles.icon} name="settings" size={25} color="#4c4c4c" /></TouchableOpacity>
+                <TouchableOpacity style={styles.box} onPress={() => this.props.navigation.navigate('Map')}><Icon name="map" size={30} color="black" /></TouchableOpacity>
+                <TouchableOpacity style={styles.box} onPress={() => this.props.navigation.navigate('Profile')}><Icon name="user" size={25} color="#4c4c4c" /></TouchableOpacity>
             </View>
         )
     }
@@ -38,17 +43,15 @@ const styles = StyleSheet.create({
         borderColor: '#d3d3d3',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        zIndex: 10
     },
     box: {
         height: 50,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    icon: {
-        color: 'black'
     }
 })
 
-
+export default withNavigation(Menu);
