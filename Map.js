@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import glamorous from 'glamorous-native';
+
 import {
     View,
     Text,
@@ -6,7 +8,7 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import Menu from './Menu';
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -31,49 +33,29 @@ export default class Map extends Component {
                 latitudeDelta: 0,
                 longitudeDelta: 0
             },
-            markerPosition: {
-                latitude: 0,
-                longitude: 0
-            }
+            markers: []
         }
     }
 
     watchID: ?number = null
 
-    componentWillMount() {
-        // navigator.geolocation.getCurrentPosition((position) => {
-        //     var lat = parseFloat(position.coords.latitude);
-        //     var long = parseFloat(position.coords.longitude);
+    componentDidMount() {
+        navigator.geolocation.getCurrentPosition((position) => {
+            var lat = parseFloat(position.coords.latitude);
+            var long = parseFloat(position.coords.longitude);
 
-        //     var initialRegion = {
-        //         latitude: lat,
-        //         longitude: long,
-        //         latitudeDelta: LATITUDE_DELTA,
-        //         longitudeDelta: LONGITUDE_DELTA
-        //     }
+            var initialRegion = {
+                latitude: lat,
+                longitude: long,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA
+            }
 
-        //     this.setState({
-        //         initialPosition: initialRegion,
-        //         markerPosition: initialRegion
-        //     })
-        // }, (error) => alert(JSON.stringify(error)),
-        //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
-
-        // this.watchID = navigator.geolocation.watchPosition((position) => {
-        //     var lat = parseFloat(position.coords.latitude);
-        //     var long = parseFloat(position.coords.longitude);
-
-        //     var lastRegion = {
-        //         latitude: lat,
-        //         longitude: long,
-        //         latitudeDelta: LATITUDE_DELTA,
-        //         longitudeDelta: LONGITUDE_DELTA
-        //     }
-
-        //     this.setState({
-        //         markerPosition: lastRegion
-        //     })
-        // })
+            this.setState({
+                initialPosition: initialRegion
+            })
+        }, (error) => alert(JSON.stringify(error)),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
 
     }
 
@@ -83,26 +65,45 @@ export default class Map extends Component {
 
     handlePress = () => {
         navigator.geolocation.getCurrentPosition((position) => {
-                var lat = parseFloat(position.coords.latitude);
-                var long = parseFloat(position.coords.longitude);
-    
-                var initialRegion = {
-                    latitude: lat,
-                    longitude: long,
-                    latitudeDelta: LATITUDE_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA
-                }
-    
-                this.setState({
-                    initialPosition: initialRegion,
-                    markerPosition: initialRegion
-                })
-            }, (error) => alert(JSON.stringify(error)),
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+            var lat = parseFloat(position.coords.latitude);
+            var long = parseFloat(position.coords.longitude);
+
+            var region = {
+                latitude: lat,
+                longitude: long,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA
+            }
+
+            this.setState({
+                initialPosition: region
+            })
+        }, (error) => alert(JSON.stringify(error)),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+    }
+
+    addMarker = () => {
+        let { latitude, longitude } = this.state.initialPosition;
+        console.log(`you want to add a marker at lat ${this.state.initialPosition.latitude} and long ${this.state.initialPosition.longitude}`)
+        let markersCopy = [...this.state.markers];
+        markersCopy.push({
+            latlng: {
+                latitude,
+                longitude
+            }
+        });
+        this.setState({ markers: markersCopy });
+    }
+
+    handleRegionChange = (region) => {
+        console.log(region)
+        this.setState({
+            initialPosition: region
+        })
     }
 
     render() {
-
+        console.log(this.state.markers)
 
         return (
             <View style={StyleSheet.absoluteFillObject}>
@@ -114,8 +115,14 @@ export default class Map extends Component {
                     showsMyLocationButton={true}
                     showsUserLocation={true}
                     region={this.state.initialPosition}
-                    style={styles.map}>
-                    <MapView.Marker coordinate={this.state.markerPosition} />
+                    style={styles.map}
+                    onRegionChangeComplete={this.handleRegionChange} >
+                    {
+                        this.state.markers.map((marker, idx) => {
+                            return <Marker coordinate={marker.latlng} key={idx} />
+                        })
+                    }
+                    <AddMarker onPress={this.addMarker} />
                 </MapView>
                 <Menu />
             </View>
@@ -137,7 +144,7 @@ const styles = StyleSheet.create({
         zIndex: 50,
         justifyContent: 'center',
         alignItems: 'center'
-    }, 
+    },
     map: {
         ...StyleSheet.absoluteFillObject,
         zIndex: 5
@@ -146,4 +153,15 @@ const styles = StyleSheet.create({
         color: '#2D9CDB',
         fontSize: 17
     }
+})
+
+const AddMarker = glamorous.touchableOpacity({
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    backgroundColor: '#2D9CDB',
+    position: 'absolute',
+    right: 25,
+    bottom: 75,
+    zIndex: 10
 })
