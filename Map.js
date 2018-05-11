@@ -40,60 +40,79 @@ export default class Map extends Component {
 
     watchID: ?number = null
 
-    componentDidMount() {
-        navigator.geolocation.getCurrentPosition((position) => {
-            var lat = parseFloat(position.coords.latitude);
-            var long = parseFloat(position.coords.longitude);
+    componentWillMount() {
+        // navigator.geolocation.getCurrentPosition((position) => {
+        //     var lat = parseFloat(position.coords.latitude);
+        //     var long = parseFloat(position.coords.longitude);
 
-            var initialRegion = {
-                latitude: lat,
-                longitude: long,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA
-            }
+        //     var initialRegion = {
+        //         latitude: lat,
+        //         longitude: long,
+        //         latitudeDelta: LATITUDE_DELTA,
+        //         longitudeDelta: LONGITUDE_DELTA
+        //     }
 
-            this.setState({
-                initialPosition: initialRegion,
-                markerPosition: initialRegion
-            })
-        }, (error) => alert(JSON.stringify(error)),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+        //     this.setState({
+        //         initialPosition: initialRegion,
+        //         markerPosition: initialRegion
+        //     })
+        // }, (error) => alert(JSON.stringify(error)),
+        //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
 
-        this.watchID = navigator.geolocation.watchPosition((position) => {
-            var lat = parseFloat(position.coords.latitude);
-            var long = parseFloat(position.coords.longitude);
+        // this.watchID = navigator.geolocation.watchPosition((position) => {
+        //     var lat = parseFloat(position.coords.latitude);
+        //     var long = parseFloat(position.coords.longitude);
 
-            var lastRegion = {
-                latitude: lat,
-                longitude: long,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA
-            }
+        //     var lastRegion = {
+        //         latitude: lat,
+        //         longitude: long,
+        //         latitudeDelta: LATITUDE_DELTA,
+        //         longitudeDelta: LONGITUDE_DELTA
+        //     }
 
-            this.setState({
-                initialPosition: lastRegion,
-                markerPosition: lastRegion
-            })
-        })
+        //     this.setState({
+        //         markerPosition: lastRegion
+        //     })
+        // })
+
     }
 
     componentWillUnmount() {
-        navigator.geolocation.clearWatch(this.watchID);
+        // navigator.geolocation.clearWatch(this.watchID);
     }
 
     handlePress = () => {
-
+        navigator.geolocation.getCurrentPosition((position) => {
+                var lat = parseFloat(position.coords.latitude);
+                var long = parseFloat(position.coords.longitude);
+    
+                var initialRegion = {
+                    latitude: lat,
+                    longitude: long,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA
+                }
+    
+                this.setState({
+                    initialPosition: initialRegion,
+                    markerPosition: initialRegion
+                })
+            }, (error) => alert(JSON.stringify(error)),
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
     }
 
     render() {
 
 
         return (
-            <View style={StyleSheet.absoluteFill}>
+            <View style={StyleSheet.absoluteFillObject}>
                 <TouchableOpacity onPress={this.handlePress} style={styles.getCurrentPosition}>
                     <Icon style={styles.navigator} name="navigation" size={20} />
                 </TouchableOpacity>
                 <MapView
+                    initialRegion={this.state.initialPosition}
+                    showsMyLocationButton={true}
+                    showsUserLocation={true}
                     region={this.state.initialPosition}
                     style={styles.map}>
                     <MapView.Marker coordinate={this.state.markerPosition} />
@@ -107,7 +126,7 @@ export default class Map extends Component {
 const styles = StyleSheet.create({
     getCurrentPosition: {
         backgroundColor: 'white',
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: '#b3b3b3',
         width: 35,
         height: 35,
